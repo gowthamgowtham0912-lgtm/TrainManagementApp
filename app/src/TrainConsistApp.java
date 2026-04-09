@@ -11,6 +11,10 @@ class Bogie {
         this.capacity = capacity;
     }
 
+    public String getType() {
+        return type;
+    }
+
     public int getCapacity() {
         return capacity;
     }
@@ -21,11 +25,12 @@ class Bogie {
     }
 }
 
-// ✅ ONLY this public class should exist
+// Main class (same as previous question)
 public class TrainConsistApp {
 
     public static void main(String[] args) {
 
+        // Create bogie list (reuse)
         List<Bogie> bogies = new ArrayList<>();
 
         bogies.add(new Bogie("Sleeper", 72));
@@ -34,15 +39,22 @@ public class TrainConsistApp {
         bogies.add(new Bogie("Sleeper", 80));
         bogies.add(new Bogie("AC Chair", 65));
 
+        // Display original list
         System.out.println("Original Bogies:");
         bogies.forEach(System.out::println);
 
-        // Stream filtering
-        List<Bogie> filteredBogies = bogies.stream()
-                .filter(b -> b.getCapacity() > 60)
-                .collect(Collectors.toList());
+        // ✅ UC9: Grouping using Stream API
+        Map<String, List<Bogie>> groupedBogies = bogies.stream()
+                .collect(Collectors.groupingBy(b -> b.getType()));
 
-        System.out.println("\nFiltered Bogies (Capacity > 60):");
-        filteredBogies.forEach(System.out::println);
+        // Display grouped result
+        System.out.println("\nGrouped Bogies by Type:");
+
+        for (Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet()) {
+            System.out.println("\nType: " + entry.getKey());
+            for (Bogie b : entry.getValue()) {
+                System.out.println(b);
+            }
+        }
     }
 }
