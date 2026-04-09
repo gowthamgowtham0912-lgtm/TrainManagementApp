@@ -1,23 +1,28 @@
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.ArrayList;
 
-// PassengerBogie class
+// Custom exception for invalid bogie capacity
+class InvalidCapacityException extends Exception {
+    public InvalidCapacityException(String message) {
+        super(message);
+    }
+}
+
+// PassengerBogie class with capacity validation
 class PassengerBogie {
     private String type;  // e.g., Sleeper, AC Chair, First Class
     private int capacity; // Number of seats
 
-    public PassengerBogie(String type, int capacity) {
+    public PassengerBogie(String type, int capacity) throws InvalidCapacityException {
+        if (capacity <= 0) {
+            throw new InvalidCapacityException("Capacity must be greater than zero");
+        }
         this.type = type;
         this.capacity = capacity;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
+    public String getType() { return type; }
+    public int getCapacity() { return capacity; }
 
     @Override
     public String toString() {
@@ -25,55 +30,39 @@ class PassengerBogie {
     }
 }
 
-// Main class
+// Main application class
 public class TrainConsistApp {
 
     public static void main(String[] args) {
 
-        // Prepare a list of passenger bogies
         List<PassengerBogie> passengerBogies = new ArrayList<>();
-        passengerBogies.add(new PassengerBogie("Sleeper", 72));
-        passengerBogies.add(new PassengerBogie("AC Chair", 60));
-        passengerBogies.add(new PassengerBogie("First Class", 80));
-        passengerBogies.add(new PassengerBogie("Sleeper", 65));
-        passengerBogies.add(new PassengerBogie("AC Chair", 55));
-        passengerBogies.add(new PassengerBogie("First Class", 90));
 
-        System.out.println("All Passenger Bogies:");
-        passengerBogies.forEach(System.out::println);
+        try {
+            PassengerBogie b1 = new PassengerBogie("Sleeper", 72);
+            passengerBogies.add(b1);
 
-        // -------------------------------
-        // Loop-based filtering
-        long loopStart = System.nanoTime();
-        List<PassengerBogie> loopFiltered = new ArrayList<>();
-        for (PassengerBogie b : passengerBogies) {
-            if (b.getCapacity() > 60) {
-                loopFiltered.add(b);
-            }
+            PassengerBogie b2 = new PassengerBogie("AC Chair", 0); // Invalid
+            passengerBogies.add(b2);
+
+        } catch (InvalidCapacityException e) {
+            System.out.println("Exception: " + e.getMessage());
         }
-        long loopEnd = System.nanoTime();
-        long loopTime = loopEnd - loopStart;
 
-        System.out.println("\nLoop-based filtered bogies (capacity > 60):");
-        loopFiltered.forEach(System.out::println);
-        System.out.println("Loop execution time: " + loopTime + " ns");
+        try {
+            PassengerBogie b3 = new PassengerBogie("First Class", -10); // Invalid
+            passengerBogies.add(b3);
+        } catch (InvalidCapacityException e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
 
-        // -------------------------------
-        // Stream-based filtering
-        long streamStart = System.nanoTime();
-        List<PassengerBogie> streamFiltered = passengerBogies.stream()
-                .filter(b -> b.getCapacity() > 60)
-                .collect(Collectors.toList());
-        long streamEnd = System.nanoTime();
-        long streamTime = streamEnd - streamStart;
+        try {
+            PassengerBogie b4 = new PassengerBogie("AC Chair", 60); // Valid
+            passengerBogies.add(b4);
+        } catch (InvalidCapacityException e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
 
-        System.out.println("\nStream-based filtered bogies (capacity > 60):");
-        streamFiltered.forEach(System.out::println);
-        System.out.println("Stream execution time: " + streamTime + " ns");
-
-        // -------------------------------
-        // Compare results
-        System.out.println("\nDo both methods produce same results? " +
-                loopFiltered.equals(streamFiltered));
+        System.out.println("\nSuccessfully created passenger bogies:");
+        passengerBogies.forEach(System.out::println);
     }
 }
