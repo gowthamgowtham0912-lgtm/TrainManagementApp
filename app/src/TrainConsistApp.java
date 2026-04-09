@@ -25,12 +25,12 @@ class Bogie {
     }
 }
 
-// Main class (same as previous question)
+// Main class (same as previous UCs)
 public class TrainConsistApp {
 
     public static void main(String[] args) {
 
-        // Create bogie list (reuse)
+        // Create bogie list
         List<Bogie> bogies = new ArrayList<>();
 
         bogies.add(new Bogie("Sleeper", 72));
@@ -43,18 +43,12 @@ public class TrainConsistApp {
         System.out.println("Original Bogies:");
         bogies.forEach(System.out::println);
 
-        // ✅ UC9: Grouping using Stream API
-        Map<String, List<Bogie>> groupedBogies = bogies.stream()
-                .collect(Collectors.groupingBy(b -> b.getType()));
+        // ✅ UC10: Calculate total seating capacity using Stream API
+        int totalSeats = bogies.stream()
+                .map(b -> b.getCapacity())   // extract capacity
+                .reduce(0, Integer::sum);   // sum all values
 
-        // Display grouped result
-        System.out.println("\nGrouped Bogies by Type:");
-
-        for (Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet()) {
-            System.out.println("\nType: " + entry.getKey());
-            for (Bogie b : entry.getValue()) {
-                System.out.println(b);
-            }
-        }
+        // Display result
+        System.out.println("\nTotal Seating Capacity: " + totalSeats);
     }
 }
