@@ -1,27 +1,27 @@
 import java.util.*;
-import java.util.stream.*;
+import java.util.stream.Collectors;
 
-// GoodsBogie class
-class GoodsBogie {
-    private String type;  // e.g., Cylindrical, Rectangular, Box
-    private String cargo; // e.g., Petroleum, Coal, Grain
+// PassengerBogie class
+class PassengerBogie {
+    private String type;  // e.g., Sleeper, AC Chair, First Class
+    private int capacity; // Number of seats
 
-    public GoodsBogie(String type, String cargo) {
+    public PassengerBogie(String type, int capacity) {
         this.type = type;
-        this.cargo = cargo;
+        this.capacity = capacity;
     }
 
     public String getType() {
         return type;
     }
 
-    public String getCargo() {
-        return cargo;
+    public int getCapacity() {
+        return capacity;
     }
 
     @Override
     public String toString() {
-        return type + " Bogie carrying " + cargo;
+        return type + " Bogie with capacity " + capacity;
     }
 }
 
@@ -30,28 +30,50 @@ public class TrainConsistApp {
 
     public static void main(String[] args) {
 
-        // Prepare list of goods bogies
-        List<GoodsBogie> goodsBogies = new ArrayList<>();
-        goodsBogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
-        goodsBogies.add(new GoodsBogie("Rectangular", "Coal"));
-        goodsBogies.add(new GoodsBogie("Box", "Grain"));
-        goodsBogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
-        // Uncomment next line to test violation
-        // goodsBogies.add(new GoodsBogie("Cylindrical", "Coal"));
+        // Prepare a list of passenger bogies
+        List<PassengerBogie> passengerBogies = new ArrayList<>();
+        passengerBogies.add(new PassengerBogie("Sleeper", 72));
+        passengerBogies.add(new PassengerBogie("AC Chair", 60));
+        passengerBogies.add(new PassengerBogie("First Class", 80));
+        passengerBogies.add(new PassengerBogie("Sleeper", 65));
+        passengerBogies.add(new PassengerBogie("AC Chair", 55));
+        passengerBogies.add(new PassengerBogie("First Class", 90));
 
-        // Display all goods bogies
-        System.out.println("Goods Bogies:");
-        goodsBogies.forEach(System.out::println);
+        System.out.println("All Passenger Bogies:");
+        passengerBogies.forEach(System.out::println);
 
-        // ✅ UC12: Safety Compliance Check
-        boolean isSafe = goodsBogies.stream()
-                .allMatch(b -> !b.getType().equals("Cylindrical") || b.getCargo().equals("Petroleum"));
-
-        // Display result
-        if (isSafe) {
-            System.out.println("\nTrain is SAFETY COMPLIANT");
-        } else {
-            System.out.println("\nTrain is NOT SAFE! Violation found.");
+        // -------------------------------
+        // Loop-based filtering
+        long loopStart = System.nanoTime();
+        List<PassengerBogie> loopFiltered = new ArrayList<>();
+        for (PassengerBogie b : passengerBogies) {
+            if (b.getCapacity() > 60) {
+                loopFiltered.add(b);
+            }
         }
+        long loopEnd = System.nanoTime();
+        long loopTime = loopEnd - loopStart;
+
+        System.out.println("\nLoop-based filtered bogies (capacity > 60):");
+        loopFiltered.forEach(System.out::println);
+        System.out.println("Loop execution time: " + loopTime + " ns");
+
+        // -------------------------------
+        // Stream-based filtering
+        long streamStart = System.nanoTime();
+        List<PassengerBogie> streamFiltered = passengerBogies.stream()
+                .filter(b -> b.getCapacity() > 60)
+                .collect(Collectors.toList());
+        long streamEnd = System.nanoTime();
+        long streamTime = streamEnd - streamStart;
+
+        System.out.println("\nStream-based filtered bogies (capacity > 60):");
+        streamFiltered.forEach(System.out::println);
+        System.out.println("Stream execution time: " + streamTime + " ns");
+
+        // -------------------------------
+        // Compare results
+        System.out.println("\nDo both methods produce same results? " +
+                loopFiltered.equals(streamFiltered));
     }
 }
