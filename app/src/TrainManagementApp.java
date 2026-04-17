@@ -1,28 +1,21 @@
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class TrainManagementApp {
 
-    // Binary Search Method
-    public static boolean binarySearch(String[] bogieIds, String key) {
-        int low = 0;
-        int high = bogieIds.length - 1;
+    // Linear Search with Defensive Check
+    public static boolean searchBogie(String[] bogieIds, String key) {
 
-        while (low <= high) {
-            int mid = (low + high) / 2;
-
-            int result = bogieIds[mid].compareTo(key);
-
-            if (result == 0) {
-                return true; // found
-            } else if (result < 0) {
-                low = mid + 1; // search right
-            } else {
-                high = mid - 1; // search left
-            }
+        // ✅ Defensive Programming: check state first
+        if (bogieIds == null || bogieIds.length == 0) {
+            throw new IllegalStateException("Cannot perform search: No bogies available in the train.");
         }
 
-        return false; // not found
+        for (int i = 0; i < bogieIds.length; i++) {
+            if (bogieIds[i].equals(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void main(String[] args) {
@@ -34,23 +27,29 @@ public class TrainManagementApp {
 
         String[] bogieIds = new String[n];
 
-        System.out.println("Enter sorted bogie IDs:");
-        for (int i = 0; i < n; i++) {
-            bogieIds[i] = scanner.nextLine();
+        // Input bogies
+        if (n > 0) {
+            System.out.println("Enter bogie IDs:");
+            for (int i = 0; i < n; i++) {
+                bogieIds[i] = scanner.nextLine();
+            }
         }
-
-        // Ensure sorting (important step)
-        Arrays.sort(bogieIds);
 
         System.out.print("Enter bogie ID to search: ");
         String key = scanner.nextLine();
 
-        boolean found = binarySearch(bogieIds, key);
+        try {
+            boolean found = searchBogie(bogieIds, key);
 
-        if (found) {
-            System.out.println("Bogie ID found using Binary Search.");
-        } else {
-            System.out.println("Bogie ID NOT found.");
+            if (found) {
+                System.out.println("Bogie ID found.");
+            } else {
+                System.out.println("Bogie ID NOT found.");
+            }
+
+        } catch (IllegalStateException e) {
+            // meaningful error message
+            System.out.println(e.getMessage());
         }
 
         scanner.close();
