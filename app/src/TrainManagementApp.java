@@ -1,62 +1,34 @@
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class TrainManagementApp {
 
-    // Method to perform Bubble Sort
-    public static void bubbleSort(int[] capacities) {
-        int n = capacities.length;
-
-        for (int i = 0; i < n - 1; i++) {
-            // flag to optimize if already sorted
-            boolean swapped = false;
-
-            for (int j = 0; j < n - 1 - i; j++) {
-                if (capacities[j] > capacities[j + 1]) {
-                    // swap
-                    int temp = capacities[j];
-                    capacities[j] = capacities[j + 1];
-                    capacities[j + 1] = temp;
-
-                    swapped = true;
-                }
-            }
-
-            // if no swaps → already sorted
-            if (!swapped) {
-                break;
-            }
-        }
+    // Method to sort bogie names
+    public static void sortBogieNames(String[] bogies) {
+        Arrays.sort(bogies); // built-in sorting
     }
 
-    // Method to display array
-    public static void display(int[] arr) {
-        for (int val : arr) {
-            System.out.print(val + " ");
-        }
-        System.out.println();
-    }
-
-    // Main method (User interaction)
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter number of passenger bogies: ");
+        System.out.print("Enter number of bogies: ");
         int n = scanner.nextInt();
+        scanner.nextLine(); // consume newline
 
-        int[] capacities = new int[n];
+        String[] bogies = new String[n];
 
-        System.out.println("Enter capacities:");
+        System.out.println("Enter bogie names:");
         for (int i = 0; i < n; i++) {
-            capacities[i] = scanner.nextInt();
+            bogies[i] = scanner.nextLine();
         }
 
         System.out.println("Before Sorting:");
-        display(capacities);
+        System.out.println(Arrays.toString(bogies));
 
-        bubbleSort(capacities);
+        sortBogieNames(bogies);
 
         System.out.println("After Sorting:");
-        display(capacities);
+        System.out.println(Arrays.toString(bogies));
 
         scanner.close();
     }
